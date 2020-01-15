@@ -1,0 +1,15 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true // 이걸 켜 두면 ecma문법이 아니라고 경고 안한다
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended","plugin:prettier/recommended"],
+  "plugins": ["import", "react-hooks"]
+}

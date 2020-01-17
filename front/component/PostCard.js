@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Input, Button, Card, Icon, Avatar } from "antd";
+import PropTypes from "prop-types";
 
 const PostCard = ({ post }) => {
   return (
@@ -21,6 +22,15 @@ const PostCard = ({ post }) => {
       />
     </Card>
   );
+};
+
+PostCard.propTypes = {
+  post: PropTypes.shape({
+    User: PropTypes.object,
+    content: PropTypes.string,
+    img: PropTypes.string,
+    createdAt: PropTypes.object
+  })
 };
 
 export default PostCard;

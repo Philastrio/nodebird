@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from "antd";
 import PropTypes from "prop-types";
 import LoginForm from "./LoginForm";
+import ProfileCard from "./ProfileCard";
 
 const dummy = {
   nickname: "한초보",
@@ -33,36 +34,9 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         {" "}
-        {/* gutter: Col간의 간격 */}
+        {/* gutter: Col간의 간격 // Form은 state를 가지고 있기에 분리해주는 것이 좋다 */}
         <Col xs={24} md={6}>
-          {dummy.isLoggedIn ? (
-            <Card
-              actions={[
-                <div key="twit">
-                  짹짹
-                  <br />
-                  {dummy.Post.length}
-                </div>,
-                <div key="following">
-                  팔로잉
-                  <br />
-                  {dummy.Followings.length}
-                </div>,
-                <div key="follower">
-                  팔로워
-                  <br />
-                  {dummy.Followers.length}
-                </div>
-              ]}
-            >
-              <Card.Meta
-                avatar={<Avatar>{dummy.nickname[0]}</Avatar>}
-                title={dummy.nickname}
-              />
-            </Card>
-          ) : (
-            <LoginForm />
-          )}
+          {dummy.isLoggedIn ? <ProfileCard /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

@@ -1,5 +1,4 @@
 import React from "react";
-import { Form, Input, Button, Card, Icon, Avatar } from "antd";
 import PostForm from "../component/PostForm";
 import PostCard from "../component/PostCard";
 

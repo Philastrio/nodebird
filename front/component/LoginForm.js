@@ -2,16 +2,24 @@ import React, { useCallback } from "react";
 import { Form, Input, Button } from "antd";
 import Link from "next/link";
 import useInput from "../hooks/useInput";
+import { useDispatch, useSelector } from "react-redux";
+import { LOG_IN_REQUEST } from "../reducers/user";
 
 const LoginForm = () => {
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
+  const { isLoggingIn } = useSelector(state => state.UserReducer);
+  const dispatch = useDispatch();
+
   const onSubmitForm = useCallback(
     e => {
       e.preventDefault();
-      console.log({
-        id,
-        password
+      dispatch({
+        type: LOG_IN_REQUEST, // 액션이 귀찮으면 그냥 타입으로 디스패치한다
+        data: {
+          id,
+          password
+        }
       });
     },
     [id, password]
@@ -36,7 +44,7 @@ const LoginForm = () => {
         />
       </div>
       <div style={{ marginTop: "10px" }}>
-        <Button type="primary" htmlType="submit" loading={false}>
+        <Button type="primary" htmlType="submit" loading={isLoggingIn}>
           로그인
         </Button>
         <Link href="/signup">

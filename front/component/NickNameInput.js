@@ -1,11 +1,9 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
-
-const dummyUser = {
-  name: "한강친구"
-};
+import { useSelector } from "react-redux";
 
 const NickNameInput = () => {
+  const { user } = useSelector(state => state.UserReducer);
   return (
     <Form
       style={{
@@ -14,7 +12,7 @@ const NickNameInput = () => {
         padding: "20px"
       }}
     >
-      <Input addonBefore="닉네임" value={dummyUser.name} />
+      <Input addonBefore="닉네임" value={user.nickname} />
       <Button type="primary">수정</Button>
     </Form>
   );

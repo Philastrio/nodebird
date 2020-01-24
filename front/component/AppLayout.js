@@ -4,16 +4,10 @@ import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from "antd";
 import PropTypes from "prop-types";
 import LoginForm from "./LoginForm";
 import ProfileCard from "./ProfileCard";
-
-const dummy = {
-  nickname: "한초보",
-  Post: [],
-  Followings: [],
-  Followers: [],
-  isLoggedIn: false
-};
+import { useSelector } from "react-redux";
 
 const AppLayout = ({ children }) => {
+  const { isLoggedIn } = useSelector(state => state.UserReducer);
   return (
     <div>
       <Menu mode={"horizontal"}>
@@ -36,7 +30,7 @@ const AppLayout = ({ children }) => {
         {" "}
         {/* gutter: Col간의 간격 // Form은 state를 가지고 있기에 분리해주는 것이 좋다 */}
         <Col xs={24} md={6}>
-          {dummy.isLoggedIn ? <ProfileCard /> : <LoginForm />}
+          {isLoggedIn ? <ProfileCard /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

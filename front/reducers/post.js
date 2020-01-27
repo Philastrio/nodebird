@@ -21,7 +21,7 @@ export const initialState = {
 };
 
 const dummyPost = {
-  id: 2,
+  id: 1,
   User: {
     id: 1,
     nickname: "한강 더미"
@@ -121,10 +121,11 @@ const PostReducer = (state = initialState, action) => {
     }
     case ADD_COMMENT_SUCCESS: {
       const postIndex = state.mainPosts.findIndex(
+        // 게시글이 어디있는지 찾아본다
         v => v.id === action.data.postId
       );
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, dummyComment];
+      const Comments = [...post.Comments, dummyComment]; // 불변성 확보하면서 새 댓글을 단다
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = { ...post, Comments };
       return {

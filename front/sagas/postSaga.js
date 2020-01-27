@@ -8,6 +8,8 @@ import {
   ADD_COMMENT_FAILURE
 } from "../reducers/post";
 
+function addPostAPI() {}
+
 function* addPost() {
   try {
     yield delay(1000); // 서버가 없어서 이렇게 2초로 했음

@@ -9,18 +9,21 @@ import {
 } from "../reducers/user";
 import axios from "axios";
 
-function loginAPI() {
-  // 서버에 요청을 보내는 부분
-}
+axios.defaults.baseURL = "http://localhost:8080/api";
 
-function* login() {
+function loginAPI(loginData) {
+  return axios.post("/user/login", loginData, { withCredentials: true }); // loginData에 userId, password가 들어 있다 쿠키를 주고받기 위해 withCredentials를 넣는다
+} // 서버에서는 cors가 담당한다(index.js에서 찾아볼것)
+
+function* logIn(action) {
   try {
     //yield call(loginAPI); // call은 함수 동기적 호출
+    const result = yield call(loginAPI, action.data);
 
-    yield delay(2000);
     yield put({
       // put은 dispatch와 동일
-      type: LOG_IN_SUCCESS
+      type: LOG_IN_SUCCESS,
+      data: result.data
     });
   } catch (e) {
     // loginAPI실패
@@ -39,12 +42,12 @@ function* watchLogin() {
   yield put({
     type: LOG_IN_SUCCESS // LOG_IN을 받으면 LOG_IN_SUCCESS를 실행한다
   }); */
-  yield takeEvery(LOG_IN_REQUEST, login);
+  yield takeEvery(LOG_IN_REQUEST, logIn);
 }
 ////////////////////////////////////////////////////////////////
 function signUpAPI(signUpData) {
   // 서버에 요청을 보내는 부분
-  return axios.post("http://localhost:8080/api/user/", signUpData);
+  return axios.post("/user/", signUpData);
 }
 
 function* signUp(action) {

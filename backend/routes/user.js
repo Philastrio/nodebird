@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../models");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const passport = require("passport");
 
 // API는 다른 서비스가 내 서비스이 기능을 실행할 수 있게 열어둔 창구
 router.get("/", (req, res) => {}); // 내정보 가져오는 것
@@ -33,8 +34,61 @@ router.post("/", async (req, res, next) => {
   }
 }); // 회원 가입
 router.get("/:id", (req, res) => {}); // 남의가져오기 :id는 req.params.id로 가져올 수 있다
-router.post("/logout", (req, res) => {}); // 로그아웃
-router.post("/login", (req, res) => {}); // 로그인
+
+router.post("/logout", (req, res) => {
+  req.logOut();
+  req.session.destroy(); // 2개만 적어주면 로그아웃된다
+  req.send("로그아웃 성공");
+}); // 로그아웃
+
+router.post("/login", (req, res, next) => {
+  // Post /api/user/login
+  passport.authenticate("local", (err, user, info) => {
+    /* err,user,info는 done의 3개의 인자이다 */
+    if (err) {
+      //서버에러의경우
+      console.error(err);
+      return res.status(555).send(info.reason);
+    }
+    if (info) {
+      //로직상의 에러인 경우
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async loginErr => {
+      // 아무이상 없으면 로그인을 시키는데
+      try {
+        if (loginErr) {
+          return console.log("login Error", loginErr);
+        }
+        const fullUser = await db.User.findOne({
+          where: { id: user.id },
+          include: [
+            {
+              model: db.Post, // include하면 관계를 맺어준 모든 것들을 가져온다 하지만 반드시 as를 붙여야 한다
+              as: "Posts",
+              attributes: ["id"] // 갯수를 셀 것이기에 id만 가도 충분하다
+            },
+            {
+              model: db.User,
+              as: "Followings",
+              attributes: ["id"]
+            },
+            {
+              model: db.User,
+              as: "Followers",
+              attributes: ["id"]
+            }
+          ],
+          attributes: ["id", "nickname", "userId"] // 프론트에는 비밀번호 배고 보낸다
+        });
+        console.log(fullUser);
+        return res.json(fullUser); // 그냥 user로 하면 패스워드까지 그냥 드러나기에 한번 걸러준다
+      } catch (e) {
+        next(e);
+      }
+    });
+  })(req, res, next); // kakao 로그인 구현하게 되면 여기에 kakao를 넣으면 된다
+}); // 로그인
 router.get("/:id/follow", (req, res) => {}); // 로그아웃
 router.post("/:id/follow", (req, res) => {}); // 로그아웃
 router.delete("/:id/follow", (req, res) => {}); // 로그아웃

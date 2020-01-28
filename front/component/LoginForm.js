@@ -17,7 +17,7 @@ const LoginForm = () => {
       dispatch({
         type: LOG_IN_REQUEST, // 액션이 귀찮으면 그냥 타입으로 디스패치한다
         data: {
-          id,
+          userId: id,
           password
         }
       });

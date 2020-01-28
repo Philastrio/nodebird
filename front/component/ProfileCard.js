@@ -11,7 +11,7 @@ const ProfileCard = () => {
       type: LOG_OUT_REQUEST
     });
   }, []);
-
+  console.log(me);
   return (
     <>
       <Card
@@ -19,7 +19,7 @@ const ProfileCard = () => {
           <div key="twit">
             짹짹
             <br />
-            {me.Post.length}
+            {me.Posts.length}
           </div>,
           <div key="following">
             팔로잉
@@ -34,7 +34,7 @@ const ProfileCard = () => {
         ]}
       >
         <Card.Meta avatar={<Avatar>{me.userId[0]}</Avatar>} title={me.userId} />
-        <Button onClick={onLogout}>{me.userId}로그아웃 </Button>
+        <Button onClick={onLogout}>로그아웃 </Button>
       </Card>
     </>
   );

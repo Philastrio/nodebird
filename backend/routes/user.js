@@ -1,11 +1,17 @@
 const express = require("express");
-const db = require("../models");
 const bcrypt = require("bcrypt");
-const router = express.Router();
 const passport = require("passport");
+const db = require("../models");
+const { isLoggedIn } = require("./middleware");
 
+const router = express.Router();
 // API는 다른 서비스가 내 서비스이 기능을 실행할 수 있게 열어둔 창구
-router.get("/", (req, res) => {}); // 내정보 가져오는 것
+router.get("/", isLoggedIn, (req, res) => {
+  const user = Object.assign({}, req.user.toJSON());
+  console.log("isLoggedIn user가져오기", user);
+  delete user.password;
+  return res.json(user);
+}); // 내정보 가져오는 것
 router.post("/", async (req, res, next) => {
   // Post /api/user 회원가입
   try {
@@ -38,7 +44,7 @@ router.get("/:id", (req, res) => {}); // 남의가져오기 :id는 req.params.id
 router.post("/logout", (req, res) => {
   req.logOut();
   req.session.destroy(); // 2개만 적어주면 로그아웃된다
-  req.send("로그아웃 성공");
+  res.send("로그아웃 성공");
 }); // 로그아웃
 
 router.post("/login", (req, res, next) => {

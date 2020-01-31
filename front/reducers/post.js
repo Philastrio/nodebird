@@ -1,16 +1,5 @@
 export const initialState = {
-  mainPosts: [
-    {
-      User: {
-        id: 1,
-        nickname: "hankang"
-      },
-      content: "첫번째 게시글",
-      img:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTi-sZc6qlfX92vpDzNxKG1Vrg4g_rm1VIdgM2W8Y_wqowrZvT&s",
-      Comments: []
-    }
-  ], // 화면에 보일 포스트들
+  mainPosts: [], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
   addPostErrorReason: "",
   isAddingPost: false, // 포스트 업로드 중
@@ -18,26 +7,6 @@ export const initialState = {
   isAddingComment: false,
   addCommentErrorReason: "",
   commentAdded: false
-};
-
-const dummyPost = {
-  id: 1,
-  User: {
-    id: 1,
-    nickname: "한강 더미"
-  },
-  content: "아이디 2 더미 포스트",
-  Comments: []
-};
-
-const dummyComment = {
-  id: 1,
-  User: {
-    id: 1,
-    nickname: "한강 코멘트"
-  },
-  createdAt: new Date(),
-  content: "더미 댓글입니다"
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = "LOAD_MAIN_POSTS_REQUEST";
@@ -88,6 +57,23 @@ export const RETWEET_FAILURE = "RETWEET_FAILURE";
 
 const PostReducer = (state = initialState, action) => {
   switch (action.type) {
+    case LOAD_MAIN_POSTS_REQUEST: {
+      return {
+        ...state,
+        mainPosts: []
+      };
+    }
+    case LOAD_MAIN_POSTS_SUCCESS: {
+      return {
+        ...state,
+        mainPosts: action.data
+      };
+    }
+    case LOAD_MAIN_POSTS_FAILURE: {
+      return {
+        ...state
+      };
+    }
     case ADD_POST_REQUEST: {
       return {
         ...state,
@@ -100,8 +86,9 @@ const PostReducer = (state = initialState, action) => {
       return {
         ...state,
         isAddingPost: false,
-        mainPosts: [dummyPost, ...state.mainPosts],
-        postAdded: true
+        mainPosts: [action.data, ...state.mainPosts],
+        postAdded: true,
+        imagePaths: []
       };
     }
     case ADD_POST_FAILURE: {
@@ -125,7 +112,7 @@ const PostReducer = (state = initialState, action) => {
         v => v.id === action.data.postId
       );
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, dummyComment]; // 불변성 확보하면서 새 댓글을 단다
+      const Comments = [...post.Comments, action.data.comment]; // 불변성 확보하면서 새 댓글을 단다
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = { ...post, Comments };
       return {

@@ -8,9 +8,9 @@ router.post("/", async (req, res, next) => {
     //문자열을 뽑아낼때 정규표현식을 사용한다
     const newPost = await db.Post.create({
       content: req.body.content,
-      UserId: req.user.id
+      userId: req.user.id
     });
-    /* if (hashtags) {
+    if (hashtags) {
       const result = await Promise.all(
         hashtags.map(tag =>
           db.HashTag.findOrCreate({
@@ -20,12 +20,18 @@ router.post("/", async (req, res, next) => {
       );
       console.log(result);
       await newPost.addHashtags(result.map(r => r[0]));
-    } */
-    const fullPost = await db.Post.findOne({
+    }
+
+    /* const fullPost = await db.Post.findOne({
       where: { id: newPost.id },
-      include: [{ model: db.User, attributes: ["id", "nickname"] }]
-    });
-    res.json(fullPost);
+      include: [{ model: db.User }]
+    }); 
+    res.json(fullPost); 이렇게 할 수 도 있다  
+    // 이렇게 한번더 찾아줘야 한다. 그렇치 않으면 빈 것이 올라간다
+    */
+    const User = await newPost.getUser();
+    newPost.User = User;
+    res.json(newPost);
   } catch (e) {
     console.log(e);
     next(e);

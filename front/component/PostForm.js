@@ -21,13 +21,20 @@ const PostForm = () => {
     setText(e.target.value);
   }, []);
 
-  const onSubmitForm = useCallback(e => {
-    e.preventDefault(); // spa(single page application을 만들때는 무조건 이걸 넣어주지 않으면 페이지가 넘어가게 된다)
-    dispatch({
-      type: ADD_POST_REQUEST,
-      data: { text }
-    });
-  }, []);
+  const onSubmitForm = useCallback(
+    e => {
+      e.preventDefault(); // spa(single page application을 만들때는 무조건 이걸 넣어주지 않으면 페이지가 넘어가게 된다)
+      if (!text || !text.trim()) {
+        // trim 문자열 양쪽 공백제거(스페이스만 치는 사람들이 있어서 그럼)
+        return alert("게시글을 작성하세요"); // return을 안적어주면 여기서 종료가 안되어 공백이 떠도 아래 dispatch로 넘어간다
+      }
+      dispatch({
+        type: ADD_POST_REQUEST,
+        data: { content: text }
+      });
+    },
+    [text] // 요거 안적어주면 빈 내용이 올라간다
+  );
 
   return (
     <Form

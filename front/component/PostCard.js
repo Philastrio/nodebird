@@ -3,6 +3,7 @@ import { Form, Input, Button, Card, Icon, Avatar, Comment, List } from "antd";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { ADD_COMMENT_REQUEST } from "../reducers/post";
+import Link from "next/link";
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -49,7 +50,7 @@ const PostCard = ({ post }) => {
         actions={[
           <Icon type="retweet" key="retweet" />,
           <Icon type="heart" key="heart" />,
-          <Icon type="message" key="mess age" onClick={onToggleComment} />,
+          <Icon type="message" key="message" onClick={onToggleComment} />,
           <Icon type="ellipsis" key="ellipsis" />
         ]}
         extra={<Button>팔로우</Button>}
@@ -57,7 +58,20 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={
+            <div>
+              {post.content.split(/(#[^\s]+)/g).map(v => {
+                if (v.match(/#[^\s]+/)) {
+                  return (
+                    <Link href="/hashtag" key={v}>
+                      <a>{v}</a>
+                    </Link>
+                  );
+                }
+                return v;
+              })}
+            </div>
+          }
         />
       </Card>
       {commentFormOpened && (
@@ -77,14 +91,13 @@ const PostCard = ({ post }) => {
           <List
             header={`${post.Comments ? post.Comments.length : 0} 댓글`}
             itemLayout="horizontal"
-            dataSource={post.Comment || []}
+            dataSource={post.Comments || []}
             renderItem={item => (
               <li>
                 <Comment
                   author={item.User.nickname}
                   avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
                   content={item.content}
-                  datetime={item.createdAt}
                 />
               </li>
             )}

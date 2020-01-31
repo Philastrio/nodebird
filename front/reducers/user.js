@@ -1,5 +1,4 @@
 export const initialState = {
-  isLoggedIn: false,
   isLoggingOut: false,
   isLoggingIn: false,
   logInErrorReason: "", // 로그인 실패사유
@@ -69,6 +68,15 @@ export const signUpRequestAction = data => {
 
 const UserReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ADD_POST_TO_ME: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me.Posts]
+        }
+      };
+    }
     case LOG_IN_REQUEST: {
       return {
         ...state,
@@ -80,7 +88,7 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggingIn: false,
-        isLoggedIn: true,
+
         me: action.data,
         isLoading: false
       };
@@ -89,7 +97,7 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggingIn: false,
-        isLoggedIn: false,
+
         logInErrorReason: action.error,
         me: null
       };
@@ -97,10 +105,17 @@ const UserReducer = (state = initialState, action) => {
     case LOG_OUT_REQUEST: {
       return {
         ...state,
-        isLoggedIn: false,
+        isLoggingOut: true
+      };
+    }
+    case LOG_OUT_SUCCESS: {
+      return {
+        ...state,
+        isLoggingIn: false,
         me: null
       };
     }
+
     case SIGN_UP_REQUEST: {
       return {
         ...state,
@@ -121,6 +136,28 @@ const UserReducer = (state = initialState, action) => {
         ...state,
         isSigningUp: false,
         signUpErrorReason: action.error
+      };
+    }
+    case LOAD_USER_REQUEST: {
+      return {
+        ...state
+      };
+    }
+    case LOAD_USER_SUCCESS: {
+      if (action.me) {
+        return {
+          ...state,
+          me: action.data
+        };
+      }
+      return {
+        ...state,
+        userInfo: action.data
+      };
+    }
+    case LOAD_USER_FAILURE: {
+      return {
+        ...state
       };
     }
     default: {

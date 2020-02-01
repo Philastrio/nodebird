@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import PostForm from "../component/PostForm";
 import PostCard from "../component/PostCard";
+
 import { useSelector, useDispatch } from "react-redux";
 import { LOAD_MAIN_POSTS_REQUEST } from "../reducers/post";
 
@@ -11,6 +12,7 @@ const Home = () => {
   const dispatch = useDispatch();
   /*  state: 전체 state. reducer에서 index를 의미하고 
   state.userReducer는 그중에 user.js의 userReducer를 의미 */
+
   useEffect(() => {
     dispatch({
       type: LOAD_MAIN_POSTS_REQUEST

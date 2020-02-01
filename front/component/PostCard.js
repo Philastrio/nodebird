@@ -60,15 +60,19 @@ const PostCard = ({ post }) => {
           title={post.User.nickname}
           description={
             <div>
-              {post.content.split(/(#[^\s]+)/g).map(v => {
-                if (v.match(/#[^\s]+/)) {
+              {post.content.split(/(#[^\s]+)/g).map(tag => {
+                if (tag.match(/#[^\s]+/)) {
                   return (
-                    <Link href="/hashtag" key={v}>
-                      <a>{v}</a>
+                    <Link
+                      href="/hashtag/[tag]"
+                      as={`/hashtag/${tag}`}
+                      key={tag}
+                    >
+                      <a>{tag}</a>
                     </Link>
                   );
                 }
-                return v;
+                return tag;
               })}
             </div>
           }

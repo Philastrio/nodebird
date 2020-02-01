@@ -119,7 +119,6 @@ function* loadUser(action) {
       data: result.data,
       me: !action.data
     });
-    console.log("loadUser console", result.data);
   } catch (e) {
     // loginAPI실패
     console.log(e);

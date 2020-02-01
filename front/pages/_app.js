@@ -1,20 +1,19 @@
 import React from "react";
 import Head from "next/head";
-import AppLayout from "../component/AppLayout";
 import PropTypes from "prop-types";
 import withRedux from "next-redux-wrapper";
 import { Provider } from "react-redux";
-import reducer from "../reducers";
 import { createStore, compose, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
-import rootSaga from "../sagas";
 
-const NodeBird = ({ Component, store }) => {
+import reducer from "../reducers";
+import AppLayout from "../component/AppLayout";
+import rootSaga from "../sagas";
+/* store : state, action, reducer가 합쳐진 것임 */
+const NodeBird = ({ Component, store, pageProps }) => {
   return (
     <Provider store={store}>
-      {" "}
-      {/* store : state, action, reducer가 합쳐진 것임 */}
       <Head>
         <title>NodeBird</title>
         <link
@@ -23,16 +22,27 @@ const NodeBird = ({ Component, store }) => {
         />
       </Head>
       <AppLayout>
-        <Component />
+        <Component {...pageProps} />
       </AppLayout>
     </Provider>
   );
 };
 
 NodeBird.propTypes = {
-  Component: PropTypes.elementType, //jsx에 들어갈 수 있는 모든 것을 node라 한다
-  store: PropTypes.object
+  Component: PropTypes.elementType.isRequired, //jsx에 들어갈 수 있는 모든 것을 node라 한다
+  store: PropTypes.object.isRequired,
+  pageProps: PropTypes.object.isRequired
 };
+
+NodeBird.getInitialProps = async context => {
+  const { ctx, Component } = context;
+  let pageProps = {};
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+  return { pageProps };
+};
+// Component는 26번째 줄과 같다. 결국 내가 만든 페이지(Component)에 context가 있으면 이라는 의미임
 
 const configureStore = (initialState, options) => {
   const sagaMiddleware = createSagaMiddleware();

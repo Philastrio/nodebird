@@ -18,10 +18,10 @@ db.sequelize.sync();
 passportConfig();
 
 app.use(morgan("dev")); // app.use는 미들웨어들을 사용할때 쓴다
+app.use("/", express.static("uploads"));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json()); // json형식의 본문을 처리한다
 app.use(express.urlencoded({ extended: true })); // form으로 넘어온 데이터를 처리한다. 요청 들어온 데이터를 바디에 넣어준다
-
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   expressSession({

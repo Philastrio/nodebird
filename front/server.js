@@ -31,10 +31,20 @@ app.prepare().then(() => {
     })
   );
 
+  server.get("/hashtag/:tag", (req, res) => {
+    return app.render(req, res, "/hashtag", { tag: req.params.tag });
+  }); //app=next
+  // '/hashtag'는 실제주소는 /hashtag/:tag 이지만 보여줄 것은 /hashtag 이라는 것임
+
+  server.get("/user/:id", (req, res) => {
+    return app.render(req, res, "/user", { id: req.params.id });
+  });
+
   server.get("*", (req, res) => {
     // 모든 요청을 여기서 처리하겠다는 의미
     return handle(req, res);
   });
+
   server.listen(8000, () => {
     console.log("next+express running on port 8000");
   });

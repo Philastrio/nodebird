@@ -1,6 +1,5 @@
 const passport = require("passport");
 const db = require("../models");
-// kakao, naver 로그인이든 모든 것을 아울르는 파일이다
 const local = require("./local");
 
 module.exports = () => {
@@ -17,7 +16,24 @@ module.exports = () => {
     */
     try {
       const user = await db.User.findOne({
-        where: { id }
+        where: { id },
+        include: [
+          {
+            model: db.Post,
+            as: "Posts",
+            attributes: ["id"]
+          },
+          {
+            model: db.User,
+            as: "Followings",
+            attributes: ["id"]
+          },
+          {
+            model: db.User,
+            as: "Followers",
+            attributes: ["id"]
+          }
+        ]
       });
       return done(null, user); // 여기서 불러온 유저 정보는 req.user에 저장된다
     } catch (e) {

@@ -3,9 +3,10 @@ import Link from "next/link";
 import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from "antd";
 import PropTypes from "prop-types";
 import LoginForm from "./LoginForm";
-import ProfileCard from "./ProfileCard";
+
 import { useSelector, useDispatch } from "react-redux";
 import { LOAD_USER_REQUEST } from "../reducers/user";
+import UserProfile from "./UserProfile";
 
 const AppLayout = ({ children }) => {
   const { me } = useSelector(state => state.UserReducer);
@@ -19,6 +20,7 @@ const AppLayout = ({ children }) => {
       // 로그인을 안했다면 쿠키도 없으니 LOAD_USER_REQUEST를 실행할 수 없다
     }
   }, []);
+  /* gutter: Col간의 간격 // Form은 state를 가지고 있기에 분리해주는 것이 좋다 */
   return (
     <div>
       <Menu mode={"horizontal"}>
@@ -38,10 +40,8 @@ const AppLayout = ({ children }) => {
         </Menu.Item>
       </Menu>
       <Row gutter={8}>
-        {" "}
-        {/* gutter: Col간의 간격 // Form은 state를 가지고 있기에 분리해주는 것이 좋다 */}
         <Col xs={24} md={6}>
-          {me ? <ProfileCard /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

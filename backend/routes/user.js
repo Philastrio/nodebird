@@ -39,7 +39,40 @@ router.post("/", async (req, res, next) => {
     return next(e); // 알아서 에러를 프론트로 넘겨준다 하지만 이러면 바로 에러처리를 못하고 넘겨줄 수 있으니 이것은 최후의 수단으로만 스자
   }
 }); // 회원 가입
-router.get("/:id", (req, res) => {}); // 남의가져오기 :id는 req.params.id로 가져올 수 있다
+router.get("/:id", async (req, res, next) => {
+  // 남의가져오기 :id는 req.params.id로 가져올 수 있다
+  try {
+    const user = await db.User.findOne({
+      where: { id: parseInt(req.params.id, 10) },
+      include: [
+        {
+          model: db.Post,
+          as: "Posts",
+          attributes: ["id"]
+        },
+        {
+          model: db.User,
+          as: "Followings",
+          attributes: ["id"]
+        },
+        {
+          model: db.User,
+          as: "Followers",
+          attributes: ["id"]
+        }
+      ],
+      attributes: ["id", "nickname"]
+    });
+    const jsonUser = user.toJSON();
+    jsonUser.Posts = jsonUser.Posts ? jsonUser.Posts.length : 0; // 누가 팔로잉하는 것은 민감하니 이렇게 만들어준다
+    jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
+    jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
+    req.json(user);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
 
 router.post("/logout", (req, res) => {
   req.logOut();
@@ -99,6 +132,25 @@ router.get("/:id/follow", (req, res) => {}); // 로그아웃
 router.post("/:id/follow", (req, res) => {}); // 로그아웃
 router.delete("/:id/follow", (req, res) => {}); // 로그아웃
 router.delete("/:id/follower", (req, res) => {}); // 로그아웃
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", async (req, res, next) => {
+  try {
+    const posts = await db.Post.findAll({
+      where: {
+        UserId: parseInt(req.params.id, 10), //작성자가 UserId 즉, 밖에 있기에 조건을 여기에 적고, hashtag는 그 자체의 조건이기에 안에 쓴다
+        RetweetId: null
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"]
+        }
+      ]
+    });
+    res.json(posts);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
 
 module.exports = router;

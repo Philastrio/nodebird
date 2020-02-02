@@ -103,9 +103,10 @@ function* watchLogOut() {
 }
 ////////////////////////////////////////////////////////////////
 function loadUserAPI(userId) {
-  return axios.get(userId ? `/user/${userId}` : "/user/", {
+  return axios.get(userId ? `/user/${userId}` : "/user/", { //userId는 남의 정보, 아니면 내 정보
     withCredentials: true
   }); // 서버는 로그인 여부를 프론트에서 보내는 쿠키로 판단한다. 따라서 데이터는 필요없다
+  
 } // get의 경우 데이터가 없기에 두번째 객체는 안넣어줘도 된다. 따라서 두번째 칸이 설저이 된다.
 // loadUser는 내정보를 처음에 쿠키로 가져오는 것이다. 세션쿠키를 서버가 유효한 쿠키라 판단해서 가져온다
 function* loadUser(action) {
@@ -117,7 +118,7 @@ function* loadUser(action) {
       // put은 dispatch와 동일
       type: LOAD_USER_SUCCESS,
       data: result.data,
-      me: !action.data
+      me: !action.data //  유저아이디가 없어야 나이기에
     });
   } catch (e) {
     // loginAPI실패

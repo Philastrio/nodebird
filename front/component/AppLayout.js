@@ -22,7 +22,7 @@ const AppLayout = ({ children }) => {
   }, []);
   /* gutter: Col간의 간격 // Form은 state를 가지고 있기에 분리해주는 것이 좋다 */
   return (
-    <div>
+    <>
       <Menu mode={"horizontal"}>
         <Menu.Item key="home">
           <Link href="/">
@@ -52,7 +52,7 @@ const AppLayout = ({ children }) => {
           </Link>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 

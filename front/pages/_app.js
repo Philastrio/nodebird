@@ -11,7 +11,7 @@ import reducer from "../reducers";
 import AppLayout from "../component/AppLayout";
 import rootSaga from "../sagas";
 /* store : state, action, reducer가 합쳐진 것임 */
-const NodeBird = ({ Component, store, pageProps }) => {
+const NodeBird = ({ Component, store }) => {
   return (
     <Provider store={store}>
       <Head>
@@ -22,7 +22,7 @@ const NodeBird = ({ Component, store, pageProps }) => {
         />
       </Head>
       <AppLayout>
-        <Component {...pageProps} />
+        <Component />
       </AppLayout>
     </Provider>
   );
@@ -30,18 +30,17 @@ const NodeBird = ({ Component, store, pageProps }) => {
 
 NodeBird.propTypes = {
   Component: PropTypes.elementType.isRequired, //jsx에 들어갈 수 있는 모든 것을 node라 한다
-  store: PropTypes.object.isRequired,
-  pageProps: PropTypes.object.isRequired
+  store: PropTypes.object.isRequired
 };
 
-NodeBird.getInitialProps = async context => {
+/* NodeBird.getInitialProps = async context => {
   const { ctx, Component } = context;
   let pageProps = {};
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
   }
-  return { pageProps };
-};
+  return { pageProps }; 옛날코드 버전8
+}; */
 // Component는 26번째 줄과 같다. 결국 내가 만든 페이지(Component)에 context가 있으면 이라는 의미임
 
 const configureStore = (initialState, options) => {

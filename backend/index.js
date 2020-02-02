@@ -11,6 +11,7 @@ const db = require("./models");
 const userAPIRouter = require("./routes/user");
 const postAPIRouter = require("./routes/post");
 const postsAPIRouter = require("./routes/posts");
+const hashtagAPIRouter = require("./routes/hashtag");
 
 dotenv.config(); // 이게 실행하는 것이다, 앱실행 전에 불러줘야 한다
 const app = express(); // express를 불러와서 app이라는 객체를 만든다.
@@ -41,6 +42,7 @@ app.use(passport.session());
 app.use("/api/user", userAPIRouter);
 app.use("/api/post", postAPIRouter);
 app.use("/api/posts", postsAPIRouter);
+app.use("/api/hashtag", hashtagAPIRouter);
 
 app.listen(8080, () => {
   console.log("Server is running on http://localhost:8080");

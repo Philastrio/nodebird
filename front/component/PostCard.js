@@ -64,8 +64,11 @@ const PostCard = ({ post }) => {
                 if (tag.match(/#[^\s]+/)) {
                   return (
                     <Link
-                      href="/hashtag/[tag]"
-                      as={`/hashtag/${tag}`}
+                      href={{
+                        pathname: "/hashtag",
+                        query: { tag: tag.slice(1) }
+                      }}
+                      as={`/hashtag/${tag.slice(1)}`}
                       key={tag}
                     >
                       <a>{tag}</a>

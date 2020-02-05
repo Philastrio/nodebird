@@ -1,4 +1,5 @@
 export const initialState = {
+  Comments: [],
   mainPosts: [], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
   addPostErrorReason: "",
@@ -80,6 +81,21 @@ const PostReducer = (state = initialState, action) => {
         ...state
       };
     }
+
+    case LOAD_COMMENTS_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex(
+        v => v.id === action.data.postId
+      );
+      const post = state.mainPosts[postIndex];
+      const Comments = action.data.comments;
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Comments };
+      return {
+        ...state,
+        mainPosts
+      };
+    }
+
     case ADD_POST_REQUEST: {
       return {
         ...state,
@@ -104,6 +120,22 @@ const PostReducer = (state = initialState, action) => {
         addPostErrorReason: action.error
       };
     }
+    case ADD_COMMENT_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex(
+        v => v.id === action.data.postId
+      );
+      const post = state.mainPosts[postIndex];
+      const Comments = [...post.Comments, action.data.comment];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Comments };
+
+      return {
+        ...state,
+        isAddingComment: false,
+        mainPosts: newMainPosts,
+        commentAdded: true
+      };
+    }
     case ADD_COMMENT_REQUEST: {
       return {
         ...state,
@@ -112,28 +144,30 @@ const PostReducer = (state = initialState, action) => {
         commentAdded: false
       };
     }
-    case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(
-        // 게시글이 어디있는지 찾아본다
-        v => v.id === action.data.postId
-      );
-      const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, action.data.comment]; // 불변성 확보하면서 새 댓글을 단다
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Comments };
-      return {
-        ...state,
-        isAddingComment: false,
-        mainPosts,
-        commentAdded: true
-      };
-    }
 
     case ADD_COMMENT_FAILURE: {
       return {
         ...state,
         isAddingComment: false,
         addCommentErrorReason: action.error
+      };
+    }
+    case UPLOAD_IMAGES_REQUEST: {
+      return {
+        ...state
+      };
+    }
+
+    case UPLOAD_IMAGES_SUCCESS: {
+      return {
+        ...state,
+        imagePaths: [...state.imagePaths, ...action.data] // 이미지 미리보기
+      };
+    }
+
+    case UPLOAD_IMAGES_FAILURE: {
+      return {
+        ...state
       };
     }
     default: {

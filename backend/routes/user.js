@@ -8,10 +8,10 @@ const router = express.Router();
 // API는 다른 서비스가 내 서비스이 기능을 실행할 수 있게 열어둔 창구
 router.get("/", isLoggedIn, (req, res) => {
   const user = Object.assign({}, req.user.toJSON());
-  console.log("isLoggedIn user가져오기", user);
   delete user.password;
   return res.json(user);
 }); // 내정보 가져오는 것
+
 router.post("/", async (req, res, next) => {
   // Post /api/user 회원가입
   try {
@@ -67,7 +67,7 @@ router.get("/:id", async (req, res, next) => {
     jsonUser.Posts = jsonUser.Posts ? jsonUser.Posts.length : 0; // 누가 팔로잉하는 것은 민감하니 이렇게 만들어준다
     jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
     jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
-    req.json(user);
+    res.json(jsonUser);
   } catch (e) {
     console.log(e);
     next(e);

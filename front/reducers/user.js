@@ -8,7 +8,9 @@ export const initialState = {
   me: null, // 내 정보
   followingList: [],
   followerList: [],
-  userInfo: null // 남의 정보
+  userInfo: null, // 남의 정보
+  isEditingNickname: false, // 이름변경중
+  editNicknameErrorReason: "" // 이름 변경 실패사유
 };
 // 비동기 요청들은 이렇게 3개를 세트로해서 작성하자. 비동기는 보통 액션이 최대 3개씩 나온다
 // 그래서 이런거는 리덕스 사가를 쓴다.

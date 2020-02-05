@@ -1,10 +1,11 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Form, Input, Button, Card, Icon, Avatar } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-
-import { ADD_POST_REQUEST } from "../reducers/post";
+import { ADD_POST_REQUEST, UPLOAD_IMAGES_REQUEST } from "../reducers/post";
+import { UPLOAD_IMAGES_SUCCESS } from "../reducers/post";
 
 const PostForm = () => {
+  const imageInput = useRef();
   const dispatch = useDispatch();
   const [text, setText] = useState("");
   const { imagePaths, isAddingPost, postAdded } = useSelector(
@@ -36,10 +37,26 @@ const PostForm = () => {
     [text] // 요거 안적어주면 빈 내용이 올라간다
   );
 
+  const onClickImageUpload = useCallback(() => {
+    imageInput.current.click();
+  }, [imageInput.current]);
+
+  const onChangeImages = useCallback(e => {
+    console.log(e.target.files);
+    const imageFormData = new FormData();
+    [].forEach.call(e.target.files, f => {
+      imageFormData.append("image", f); // ajex를 쓸때는 FormData에 append를 써서 키 'image'와 값을 넣는다.
+    });
+    dispatch({
+      type: UPLOAD_IMAGES_REQUEST,
+      data: imageFormData
+    });
+  }, []);
+
   return (
     <Form
       style={{ margin: "10px 0 20px" }}
-      encType="multipart/form-data"
+      encType="multipart/form-data" // 이미지, 파일, 동영상등은 multipart/form-data로 한다
       onSubmit={onSubmitForm}
     >
       <Input.TextArea
@@ -49,8 +66,14 @@ const PostForm = () => {
         onChange={onChangeText}
       />
       <div>
-        <input type="file" multiple hidden />
-        <Button>이미지 업로드</Button>
+        <input
+          type="file"
+          multiple
+          hidden
+          ref={imageInput}
+          onChange={onChangeImages}
+        />
+        <Button onClick={onClickImageUpload}>이미지 업로드</Button>
         <Button
           type="primary"
           style={{ float: "right" }}

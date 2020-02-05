@@ -2,8 +2,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Form, Input, Button, Card, Icon, Avatar, Comment, List } from "antd";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
-import { ADD_COMMENT_REQUEST } from "../reducers/post";
+import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST } from "../reducers/post";
 import Link from "next/link";
+import PostCardContent from "../component/PostCardContent";
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -16,6 +17,12 @@ const PostCard = ({ post }) => {
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(prev => !prev);
+    if (!commentFormOpened) {
+      dispatch({
+        type: LOAD_COMMENTS_REQUEST,
+        data: post.id
+      });
+    }
   }, []);
 
   const onSubmitComment = useCallback(
@@ -27,11 +34,12 @@ const PostCard = ({ post }) => {
       return dispatch({
         type: ADD_COMMENT_REQUEST,
         data: {
-          postId: post.id
+          postId: post.id,
+          content: commentText
         }
       });
     },
-    [me && me.id]
+    [me && me.id, post && post.id, commentText]
   );
 
   useEffect(() => {
@@ -56,29 +64,18 @@ const PostCard = ({ post }) => {
         extra={<Button>팔로우</Button>}
       >
         <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-          title={post.User.nickname}
-          description={
-            <div>
-              {post.content.split(/(#[^\s]+)/g).map(tag => {
-                if (tag.match(/#[^\s]+/)) {
-                  return (
-                    <Link
-                      href={{
-                        pathname: "/hashtag",
-                        query: { tag: tag.slice(1) }
-                      }}
-                      as={`/hashtag/${tag.slice(1)}`}
-                      key={tag}
-                    >
-                      <a>{tag}</a>
-                    </Link>
-                  );
-                }
-                return tag;
-              })}
-            </div>
+          avatar={
+            <Link
+              href={{ pathname: "/user", query: { id: post.User.id } }}
+              as={`/user/${post.User.id}`}
+            >
+              <a>
+                <Avatar>{post.User.nickname[0]}</Avatar>
+              </a>
+            </Link>
           }
+          title={post.User.nickname}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (
@@ -103,12 +100,21 @@ const PostCard = ({ post }) => {
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link
+                      href={{ pathname: "/user", query: { id: item.User.id } }}
+                      as={`/user/${item.User.id}`}
+                    >
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
               </li>
             )}
-          />
+          ></List>
         </>
       )}
     </div>

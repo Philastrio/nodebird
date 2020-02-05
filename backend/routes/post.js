@@ -36,6 +36,78 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     next(e);
   }
 }); // POST /api/post
-router.post("/images", (req, res) => {});
+//multer는 formData는 cookieparser로 해석못하기에 쓴다.
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, "uploads"); //done(서버에러, 성공했을때)
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, ext);
+      done(null, basename + new Date().valueOf() + ext);
+    }
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 } //바이트단위, 갯수도 제한 가능
+});
+
+//formDAta의 이름과 upload.array('image')이름이 같아야 한다/fields,none,single등의 옵션이 있다.
+router.post("/images", upload.array("image"), (req, res) => {
+  console.log(req.files);
+  res.json(req.files.map(v => v.filename));
+});
+
+router.get("/:id/comments", async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({ where: { id: req.params.id } }); // 댓글달려면 먼저 포스트가 있는지부터 확인
+    if (!post) {
+      return res.status(404).send("포스트가 존재하지 않습니다");
+    }
+    const comments = await db.Comment.findAll({
+      where: {
+        PostId: req.params.id
+      },
+      order: [["createdAt", "ASC"]],
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"]
+        }
+      ]
+    });
+    res.json(comments);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
+
+router.post("/:id/comment", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({ where: { id: req.params.id } }); // 댓글달려면 먼저 포스트가 있는지부터 확인
+    if (!post) {
+      return res.status(404).send("포스트가 존재하지 않습니다");
+    }
+    const newComment = await db.Comment.create({
+      PostId: post.id,
+      UserId: req.user.id,
+      content: req.body.content
+    });
+    await post.addComment(newComment.id); // post랑 comment랑 이어준다
+    const comment = await db.Comment.findOne({
+      where: { id: newComment.id },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"]
+        }
+      ]
+    });
+    return res.json(comment);
+  } catch (e) {
+    console.log(e);
+    return next(e);
+  }
+});
 
 module.exports = router;

@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Form, Input, Button } from "antd";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-const NickNameInput = () => {
-  const { user } = useSelector(state => state.UserReducer);
+const NickNameEditForm = () => {
+  const [editedName, setEditedName] = useState("");
+  const dispatch = useDispatch();
+  const { me, isEditingNickname } = useSelector(state => state.UserReducer);
+
+  const onChangeNickname = useCallback(e => {
+    setEditedName(e.target.value);
+  }, []);
   return (
     <Form
       style={{
@@ -12,10 +18,10 @@ const NickNameInput = () => {
         padding: "20px"
       }}
     >
-      <Input addonBefore="닉네임" value={user.nickname} />
+      <Input addonBefore="닉네임" value={me && me.nickname} />
       <Button type="primary">수정</Button>
     </Form>
   );
 };
 
-export default NickNameInput;
+export default NickNameEditForm;

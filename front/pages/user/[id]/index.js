@@ -1,27 +1,31 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { LOAD_USER_POSTS_REQUEST } from "../../reducers/post";
-import PostCard from "../../component/PostCard";
 import { Card, Avatar } from "antd";
-import { LOAD_USER_REQUEST } from "../../reducers/user";
+import { LOAD_USER_POSTS_REQUEST } from "../../../reducers/post";
+import { LOAD_USER_REQUEST } from "../../../reducers/user";
+import PostCard from "../../../component/PostCard";
 
 const User = () => {
   const router = useRouter();
+  console.log("router content", router);
   const { id } = router.query;
   const dispatch = useDispatch();
+
   const { mainPosts } = useSelector(state => state.PostReducer);
   const { userInfo } = useSelector(state => state.UserReducer);
+  console.log("mainPost content", mainPosts);
   useEffect(() => {
-    dispatch({
-      type: LOAD_USER_POSTS_REQUEST,
-      data: id
-    });
     dispatch({
       type: LOAD_USER_REQUEST,
       data: id
     });
+    dispatch({
+      type: LOAD_USER_POSTS_REQUEST,
+      data: id
+    });
   }, []);
+
   return (
     <div>
       {userInfo ? (

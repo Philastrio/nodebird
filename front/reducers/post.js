@@ -95,7 +95,55 @@ const PostReducer = (state = initialState, action) => {
         mainPosts
       };
     }
-
+    /////////////////////////////////
+    case LIKE_POST_REQUEST: {
+      return {
+        ...state
+      };
+    }
+    case LIKE_POST_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex(
+        v => v.id === action.data.postId
+      );
+      const post = state.mainPosts[postIndex];
+      const Likers = [{ id: action.data.uesrId }, ...post.Likers];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Likers };
+      return {
+        ...state,
+        mainPosts
+      };
+    }
+    case LIKE_POST_FAILURE: {
+      return {
+        ...state
+      };
+    }
+    /////////////////////////////////
+    case UNLIKE_POST_REQUEST: {
+      return {
+        ...state
+      };
+    }
+    case UNLIKE_POST_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex(
+        v => v.id === action.data.postId
+      );
+      const post = state.mainPosts[postIndex];
+      const Likers = post.Likers.filter(v => v.id != action.data.uesrId);
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Likers };
+      return {
+        ...state,
+        mainPosts
+      };
+    }
+    case UNLIKE_POST_FAILURE: {
+      return {
+        ...state
+      };
+    }
+    /////////////////////////////////
     case ADD_POST_REQUEST: {
       return {
         ...state,
@@ -120,6 +168,7 @@ const PostReducer = (state = initialState, action) => {
         addPostErrorReason: action.error
       };
     }
+    /////////////////////////////////
     case ADD_COMMENT_SUCCESS: {
       const postIndex = state.mainPosts.findIndex(
         v => v.id === action.data.postId
@@ -168,6 +217,12 @@ const PostReducer = (state = initialState, action) => {
     case UPLOAD_IMAGES_FAILURE: {
       return {
         ...state
+      };
+    }
+    case REMOVE_IMAGE: {
+      return {
+        ...state,
+        imagePaths: state.imagePaths.filter((v, i) => i !== action.index)
       };
     }
     default: {

@@ -59,6 +59,12 @@ router.get("/:id", async (req, res, next) => {
           model: db.User,
           as: "Followers",
           attributes: ["id"]
+        },
+        {
+          model: this.bind.User,
+          throught: "Like",
+          as: "Likers",
+          attributes: ["id"]
         }
       ],
       attributes: ["id", "nickname"]
@@ -143,7 +149,8 @@ router.get("/:id/posts", async (req, res, next) => {
         {
           model: db.User,
           attributes: ["id", "nickname"]
-        }
+        },
+        { model: db.Image }
       ]
     });
     res.json(posts);

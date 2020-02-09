@@ -11,6 +11,13 @@ router.get("/", async (req, res, next) => {
         {
           model: db.User,
           attributes: ["id", "nickname"]
+        },
+        { model: db.Image },
+        {
+          model: db.User,
+          throught: "Like",
+          as: "Likers",
+          attributes: ["id"]
         }
       ],
       order: [["createdAt", "DESC"]] //  조건을 추가로 더 줄 수 있어서 2차원 배열이다. 1순위로 저걸로 하고 ['updatedAt','ASC']로 2순위할수 있따

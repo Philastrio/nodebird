@@ -19,7 +19,8 @@ db.sequelize.sync();
 passportConfig();
 
 app.use(morgan("dev")); // app.use는 미들웨어들을 사용할때 쓴다
-app.use("/", express.static("uploads"));
+app.use("/", express.static("uploads")); // 6-10 이미지미리보기, 경로에 들어 있는 것을 다른 서버에서 자유롭게 가져갈수 있게 한다 업로드 경로를 루트('/')경로처럼 사용하게 해주겠다는 의미
+// '/'은 프론트에서 접근하는 주소, 'uploads'는 실제 서버주소
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json()); // json형식의 본문을 처리한다
 app.use(express.urlencoded({ extended: true })); // form으로 넘어온 데이터를 처리한다. 요청 들어온 데이터를 바디에 넣어준다

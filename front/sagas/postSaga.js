@@ -26,7 +26,10 @@ import {
   LIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
   UNLIKE_POST_FAILURE,
-  UNLIKE_POST_REQUEST
+  UNLIKE_POST_REQUEST,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
+  RETWEET_REQUEST
 } from "../reducers/post";
 import axios from "axios";
 import { ADD_POST_TO_ME } from "../reducers/user";
@@ -40,10 +43,12 @@ function* addPost(action) {
     //yield delay(1000); // 서버가 없어서 이렇게 2초로 했음
     const result = yield call(addPostAPI, action.data);
     yield put({
+      //post reducer의 데이터를 수정
       type: ADD_POST_SUCCESS,
       data: result.data
     });
     yield put({
+      // user reducer의 데이터를 수정
       type: ADD_POST_TO_ME,
       data: result.data.id
     });
@@ -274,6 +279,38 @@ function* watchUnlikePost() {
   yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
 }
 /////////////////////////////////////
+function retweetAPI(postId) {
+  return axios.post(
+    `/post/${postId}/retweet`,
+    {},
+    {
+      withCredentials: true
+    }
+  );
+} //post 요청시 데이터가 없더라도 항상 빈칸으로 놔야 한다
+
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: RETWEET_FAILURE,
+      error: e
+    });
+    console.dir(e);
+    alert(e.response && e.response.data);
+  }
+}
+
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweet);
+}
+/////////////////////////////////////
 
 export default function* postSaga() {
   yield all([
@@ -285,6 +322,7 @@ export default function* postSaga() {
     fork(watchLoadUserPosts),
     fork(watchUploadImages),
     fork(watchLikePost),
-    fork(watchUnlikePost)
+    fork(watchUnlikePost),
+    fork(watchRetweet)
   ]);
 }

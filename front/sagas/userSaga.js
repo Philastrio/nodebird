@@ -11,7 +11,13 @@ import {
   LOG_OUT_FAILURE,
   LOAD_USER_REQUEST,
   LOAD_USER_FAILURE,
-  LOAD_USER_SUCCESS
+  LOAD_USER_SUCCESS,
+  FOLLOW_USER_SUCCESS,
+  FOLLOW_USER_FAILURE,
+  FOLLOW_USER_REQUEST,
+  UNFOLLOW_USER_SUCCESS,
+  UNFOLLOW_USER_FAILURE,
+  UNFOLLOW_USER_REQUEST
 } from "../reducers/user";
 import axios from "axios";
 
@@ -103,10 +109,10 @@ function* watchLogOut() {
 }
 ////////////////////////////////////////////////////////////////
 function loadUserAPI(userId) {
-  return axios.get(userId ? `/user/${userId}` : "/user/", { //userId는 남의 정보, 아니면 내 정보
+  return axios.get(userId ? `/user/${userId}` : "/user/", {
+    //userId는 남의 정보, 아니면 내 정보
     withCredentials: true
   }); // 서버는 로그인 여부를 프론트에서 보내는 쿠키로 판단한다. 따라서 데이터는 필요없다
-  
 } // get의 경우 데이터가 없기에 두번째 객체는 안넣어줘도 된다. 따라서 두번째 칸이 설저이 된다.
 // loadUser는 내정보를 처음에 쿠키로 가져오는 것이다. 세션쿠키를 서버가 유효한 쿠키라 판단해서 가져온다
 function* loadUser(action) {
@@ -129,17 +135,61 @@ function* loadUser(action) {
     });
   }
 }
-
 function* watchLoadUser() {
   yield takeEvery(LOAD_USER_REQUEST, loadUser);
 }
-///////////////////////////////////////////////
+
+function followAPI(userId) {
+  return axios.post(`/user/${userId}/follow`, {}, { withCredentials: true });
+}
+function* follow(action) {
+  try {
+    const result = yield call(followAPI, action.data);
+    yield put({
+      type: FOLLOW_USER_SUCCESS,
+      data: result.data
+    });
+  } catch (e) {
+    console.log(e);
+    yield put({
+      type: FOLLOW_USER_FAILURE,
+      error: e
+    });
+  }
+}
+function* watchFollow() {
+  yield takeEvery(FOLLOW_USER_REQUEST, follow);
+}
+
+function unfollowAPI(userId) {
+  return axios.delete(`/user/${userId}/unfollow`, { withCredentials: true });
+}
+function* unfollow(action) {
+  try {
+    const result = yield call(unfollowAPI, action.data);
+    yield put({
+      type: UNFOLLOW_USER_SUCCESS,
+      data: result.data
+    });
+  } catch (e) {
+    console.log(e);
+    yield put({
+      type: UNFOLLOW_USER_FAILURE,
+      error: e
+    });
+  }
+}
+function* watchUnfollow() {
+  yield takeEvery(UNFOLLOW_USER_REQUEST, unfollow);
+}
 
 export default function* userSaga() {
   yield all([
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchLoadUser),
-    fork(watchSignUp)
+    fork(watchSignUp),
+    fork(watchFollow),
+    fork(watchUnfollow)
   ]);
 }

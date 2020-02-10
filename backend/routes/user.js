@@ -17,7 +17,6 @@ router.post("/", async (req, res, next) => {
   try {
     const exUser = await db.User.findOne({
       where: {
-        // 조건을 적으면 된다.
         userId: req.body.userId
       }
     });
@@ -58,12 +57,6 @@ router.get("/:id", async (req, res, next) => {
         {
           model: db.User,
           as: "Followers",
-          attributes: ["id"]
-        },
-        {
-          model: this.bind.User,
-          throught: "Like",
-          as: "Likers",
           attributes: ["id"]
         }
       ],
@@ -134,10 +127,7 @@ router.post("/login", (req, res, next) => {
     });
   })(req, res, next); // kakao 로그인 구현하게 되면 여기에 kakao를 넣으면 된다
 }); // 로그인
-router.get("/:id/follow", (req, res) => {}); // 로그아웃
-router.post("/:id/follow", (req, res) => {}); // 로그아웃
-router.delete("/:id/follow", (req, res) => {}); // 로그아웃
-router.delete("/:id/follower", (req, res) => {}); // 로그아웃
+
 router.get("/:id/posts", async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
@@ -150,12 +140,46 @@ router.get("/:id/posts", async (req, res, next) => {
           model: db.User,
           attributes: ["id", "nickname"]
         },
-        { model: db.Image }
+        {
+          model: db.Image
+        },
+        {
+          model: db.User,
+          through: "Like",
+          as: "Likers",
+          attributes: ["id"]
+        }
       ]
     });
     res.json(posts);
   } catch (e) {
     console.log(e);
+    next(e);
+  }
+});
+
+router.post("/:id/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id }
+    });
+    await me.addFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete("/:id/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id }
+    });
+    await me.removeFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
     next(e);
   }
 });

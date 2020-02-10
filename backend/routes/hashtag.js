@@ -17,10 +17,23 @@ router.get("/:tag", async (req, res, next) => {
         },
         { model: db.Image },
         {
-          model: this.bind.User,
+          model: db.User,
           throught: "Like",
           as: "Likers",
           attributes: ["id"]
+        },
+        {
+          model: db.Post,
+          as: "Retweet",
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "nickname"]
+            },
+            {
+              model: db.Image
+            }
+          ]
         }
       ]
     });

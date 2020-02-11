@@ -161,7 +161,7 @@ router.get("/:id/posts", async (req, res, next) => {
 router.post("/:id/follow", isLoggedIn, async (req, res, next) => {
   try {
     const me = await db.User.findOne({
-      where: { id: req.user.id }
+      where: { id: parseInt(req.user.id, 10) }
     });
     await me.addFollowing(req.params.id);
     res.send(req.params.id);
@@ -174,7 +174,7 @@ router.post("/:id/follow", isLoggedIn, async (req, res, next) => {
 router.delete("/:id/follow", isLoggedIn, async (req, res, next) => {
   try {
     const me = await db.User.findOne({
-      where: { id: req.user.id }
+      where: { id: parseInt(req.user.id, 10) }
     });
     await me.removeFollowing(req.params.id);
     res.send(req.params.id);

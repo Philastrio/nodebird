@@ -28,4 +28,11 @@ const Home = () => {
   );
 };
 /* redux hooks 안쓸때의 코드: 3-7강의에 나옴 */
+
+Home.getInitialProps = async context => {
+  console.log(Object.keys(context));
+  context.store.dispatch({
+    type: LOAD_MAIN_POSTS_REQUEST
+  });
+};
 export default Home;

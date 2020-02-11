@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { createStore, compose, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
-
+import axios from "axios";
 import reducer from "../reducers";
 import AppLayout from "../component/AppLayout";
 import rootSaga from "../sagas";
@@ -67,5 +67,26 @@ const configureStore = (initialState, options) => {
   sagaMiddleware.run(rootSaga);
   return store;
 };
+
+NodeBird.getInitialProps = async context => {
+  const { ctx, Component } = context;
+  let pageProps = {};
+  const state = ctx.store.getState();
+  const cookie = ctx.isServer ? ctx.req.headers.cookie : "";
+  axios.defaults.headers.Cookie = "";
+  if (ctx.isServer && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  if (!state.user.me) {
+    ctx.store.dispatch({
+      type: LOAD_USER_REQUEST
+    });
+  }
+  if (Component.getInitialProps) {
+    pageProps = (await Component.getInitialProps(ctx)) || {};
+  }
+  return { pageProps };
+};
+
 export default withRedux(configureStore)(NodeBird);
 // HOC(High Order Component: 기존 컴포넌트를 확장해주는 것이다) props로 store를 넣어주는 역할을 한다

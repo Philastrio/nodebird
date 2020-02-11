@@ -5,6 +5,7 @@ import { Card, Avatar } from "antd";
 import { LOAD_USER_POSTS_REQUEST } from "../../../reducers/post";
 import { LOAD_USER_REQUEST } from "../../../reducers/user";
 import PostCard from "../../../component/PostCard";
+import PropTypes from "prop-types";
 
 const User = () => {
   const router = useRouter();
@@ -15,16 +16,6 @@ const User = () => {
   const { mainPosts } = useSelector(state => state.PostReducer);
   const { userInfo } = useSelector(state => state.UserReducer);
   console.log("mainPost content", mainPosts);
-  useEffect(() => {
-    dispatch({
-      type: LOAD_USER_REQUEST,
-      data: id
-    });
-    dispatch({
-      type: LOAD_USER_POSTS_REQUEST,
-      data: id
-    });
-  }, []);
 
   return (
     <div>
@@ -61,4 +52,21 @@ const User = () => {
   );
 };
 
+User.propTypes = {
+  id: PropTypes.number.isRequired
+};
+
+User.getInitialProps = async context => {
+  const id = parseInt(context.query.id, 10);
+  console.log("user getInitialProps", id);
+  context.store.dispatch({
+    type: LOAD_USER_REQUEST,
+    data: id
+  });
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: id
+  });
+  return { id };
+};
 export default User;

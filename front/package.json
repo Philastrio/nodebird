@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "antd": "^3.26.6",
-    "axios": "^0.19.1",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "morgan": "^1.9.1",
     "next": "^9.2.1",

@@ -15,7 +15,7 @@
     "axios": "^0.19.1",
     "dotenv": "^8.2.0",
     "morgan": "^1.9.1",
-    "next": "^9.2.1",
+    "next": "^11.1.0",
     "next-redux-wrapper": "^4.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
